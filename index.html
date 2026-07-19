@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alloys — Design Your Own Shoes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#131217;
+    --bg-1:#1b1a20;
+    --bg-2:#232129;
+    --line:#38353f;
+    --copper:#c1652b;
+    --copper-bright:#e3874a;
+    --steel:#8892a3;
+    --ivory:#eee9e0;
+    --ivory-dim:#a9a49c;
+    --success:#7c9a72;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-0);
+    color:var(--ivory);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media (max-width:640px){.wrap{padding:0 20px;}}
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(19,18,23,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{display:flex; align-items:center; justify-content:space-between; padding:18px 0;}
+  .logo{font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.5px; display:flex; align-items:center; gap:8px;}
+  .logo .mark{width:10px; height:10px; background:var(--copper); display:inline-block; transform:rotate(45deg);}
+  .navlinks{display:flex; gap:36px; font-size:14px; color:var(--ivory-dim);}
+  .navlinks a:hover{color:var(--ivory);}
+  .navcta{
+    background:var(--copper); color:var(--bg-0); font-weight:600; font-size:14px;
+    padding:10px 20px; border-radius:2px; transition:background .2s;
+  }
+  .navcta:hover{background:var(--copper-bright);}
+  @media (max-width:800px){.navlinks{display:none;}}
+
+  /* HERO */
+  .hero{
+    padding:100px 0 80px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--copper); margin-bottom:20px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:24px; height:1px; background:var(--copper);}
+  h1{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(38px, 5.5vw, 64px); line-height:1.05; letter-spacing:-1px;
+    margin-bottom:24px;
+  }
+  h1 em{font-style:normal; color:var(--copper);}
+  .hero p.sub{font-size:18px; color:var(--ivory-dim); max-width:480px; margin-bottom:36px;}
+  .hero-ctas{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--copper); color:var(--bg-0); font-weight:600; font-size:15px;
+    padding:15px 28px; border-radius:2px; border:none; cursor:pointer; transition:background .2s;
+  }
+  .btn-primary:hover{background:var(--copper-bright);}
+  .btn-ghost{
+    border:1px solid var(--line); color:var(--ivory); font-weight:500; font-size:15px;
+    padding:14px 27px; border-radius:2px; transition:border-color .2s;
+  }
+  .btn-ghost:hover{border-color:var(--steel);}
+
+  /* Alloy composition visual - signature element */
+  .alloy-card{
+    background:var(--bg-1); border:1px solid var(--line); border-radius:4px; padding:28px;
+  }
+  .alloy-card .top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;}
+  .alloy-card .code{font-family:var(--font-mono); font-size:13px; color:var(--copper);}
+  .alloy-card .name{font-family:var(--font-display); font-size:20px; font-weight:600;}
+  .alloy-bar{
+    height:14px; border-radius:2px; overflow:hidden; display:flex; margin:18px 0 14px; border:1px solid var(--line);
+  }
+  .seg{height:100%;}
+  .alloy-legend{display:flex; flex-direction:column; gap:8px; font-family:var(--font-mono); font-size:12.5px; color:var(--ivory-dim);}
+  .alloy-legend .row{display:flex; justify-content:space-between;}
+  .alloy-legend .swatch{display:inline-block; width:9px; height:9px; margin-right:8px; border-radius:1px; vertical-align:middle;}
+
+  @keyframes fillBar{from{width:0;} }
+
+  /* SECTION HEADERS */
+  .section{padding:90px 0; border-bottom:1px solid var(--line);}
+  .section-head{max-width:560px; margin-bottom:56px;}
+  .section-head .eyebrow{margin-bottom:14px;}
+  .section-head h2{font-family:var(--font-display); font-weight:700; font-size:clamp(28px,3.5vw,38px); letter-spacing:-0.5px; margin-bottom:14px;}
+  .section-head p{color:var(--ivory-dim); font-size:16px;}
+
+  /* PROCESS */
+  .process{display:grid; grid-template-columns:repeat(3,1fr); gap:32px;}
+  @media (max-width:800px){.process{grid-template-columns:1fr;}}
+  .step{border-top:1px solid var(--copper); padding-top:20px;}
+  .step .num{font-family:var(--font-mono); font-size:13px; color:var(--copper); margin-bottom:14px;}
+  .step h3{font-family:var(--font-display); font-size:20px; font-weight:600; margin-bottom:10px;}
+  .step p{color:var(--ivory-dim); font-size:14.5px;}
+
+  /* GALLERY */
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  @media (max-width:900px){.gallery{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:600px){.gallery{grid-template-columns:1fr;}}
+  .gcard{background:var(--bg-1); border:1px solid var(--line); border-radius:4px; overflow:hidden; transition:transform .25s, border-color .25s;}
+  .gcard:hover{transform:translateY(-4px); border-color:var(--steel);}
+  .gcard .swatch-block{height:160px; position:relative;}
+  .gcard .gbody{padding:18px 20px 22px;}
+  .gcard .gcode{font-family:var(--font-mono); font-size:11.5px; color:var(--copper); margin-bottom:6px;}
+  .gcard .gname{font-family:var(--font-display); font-weight:600; font-size:17px; margin-bottom:4px;}
+  .gcard .gspec{font-family:var(--font-mono); font-size:12px; color:var(--ivory-dim);}
+  .gcard .gprice{margin-top:12px; font-weight:600; font-size:15px;}
+
+  /* PRICING */
+  .pricing{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  @media (max-width:800px){.pricing{grid-template-columns:1fr;}}
+  .price-card{background:var(--bg-1); border:1px solid var(--line); border-radius:4px; padding:32px; display:flex; flex-direction:column;}
+  .price-card.featured{border-color:var(--copper);}
+  .price-card .tier{font-family:var(--font-mono); font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--steel); margin-bottom:10px;}
+  .price-card .amount{font-family:var(--font-display); font-size:34px; font-weight:700; margin-bottom:18px;}
+  .price-card .amount span{font-size:15px; font-weight:400; color:var(--ivory-dim);}
+  .price-card ul{list-style:none; margin-bottom:24px; flex:1;}
+  .price-card li{font-size:14px; color:var(--ivory-dim); padding:8px 0; border-top:1px solid var(--line);}
+  .price-card li:first-child{border-top:none;}
+
+  /* TESTIMONIALS */
+  .testimonials{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  @media (max-width:800px){.testimonials{grid-template-columns:1fr;}}
+  .tcard{padding:24px; border-left:2px solid var(--copper);}
+  .tcard p{font-size:15px; color:var(--ivory-dim); margin-bottom:16px; font-style:italic;}
+  .tcard .who{font-family:var(--font-mono); font-size:12.5px; color:var(--ivory);}
+
+  /* CTA FOOTER */
+  .cta-band{padding:80px 0; text-align:center;}
+  .cta-band h2{font-family:var(--font-display); font-weight:700; font-size:clamp(28px,4vw,42px); margin-bottom:16px;}
+  .cta-band p{color:var(--ivory-dim); margin-bottom:32px;}
+  .email-form{display:flex; justify-content:center; gap:12px; max-width:440px; margin:0 auto; flex-wrap:wrap;}
+  .email-form input{
+    flex:1; min-width:220px; background:var(--bg-1); border:1px solid var(--line); color:var(--ivory);
+    padding:14px 16px; border-radius:2px; font-size:14px;
+  }
+  .email-form input:focus{outline:none; border-color:var(--copper);}
+  .form-msg{margin-top:14px; font-size:13px; color:var(--success); min-height:18px; font-family:var(--font-mono);}
+
+  footer{padding:40px 0; }
+  .foot-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+  .foot-links{display:flex; gap:24px; font-size:13px; color:var(--ivory-dim);}
+  .foot-links a:hover{color:var(--ivory);}
+  .copyright{font-size:13px; color:var(--ivory-dim); font-family:var(--font-mono);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="logo"><span class="mark"></span>ALLOYS</div>
+      <div class="navlinks">
+        <a href="#process">How it works</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#reviews">Reviews</a>
+      </div>
+      <a href="#start" class="navcta">Start designing</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Custom-built footwear</div>
+      <h1>Every pair is<br>its own <em>alloy</em>.</h1>
+      <p class="sub">Pick your materials, your colourway, your sole — we blend them into a shoe that exists nowhere else. Designed by you, forged by us, delivered in 12 days.</p>
+      <div class="hero-ctas">
+        <a href="#start" class="btn-primary">Design your pair</a>
+        <a href="#gallery" class="btn-ghost">See what others built</a>
+      </div>
+    </div>
+    <div class="alloy-card">
+      <div class="top">
+        <div>
+          <div class="code">AL-204 · YOUR BUILD</div>
+          <div class="name">Midnight Runner</div>
+        </div>
+      </div>
+      <div class="alloy-bar">
+        <div class="seg" style="width:55%; background:var(--copper); animation:fillBar 1.2s ease-out;"></div>
+        <div class="seg" style="width:30%; background:var(--steel);"></div>
+        <div class="seg" style="width:15%; background:var(--ivory-dim);"></div>
+      </div>
+      <div class="alloy-legend">
+        <div class="row"><span><span class="swatch" style="background:var(--copper);"></span>Nappa leather upper</span><span>55%</span></div>
+        <div class="row"><span><span class="swatch" style="background:var(--steel);"></span>Recycled canvas lining</span><span>30%</span></div>
+        <div class="row"><span><span class="swatch" style="background:var(--ivory-dim);"></span>Reinforced rubber sole</span><span>15%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="process">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">The build</div>
+      <h2>Three steps to a shoe that's actually yours</h2>
+      <p>No catalogue, no fixed SKUs. You choose the composition, we manufacture it to order.</p>
+    </div>
+    <div class="process">
+      <div class="step">
+        <div class="num">01 / BASE</div>
+        <h3>Choose your foundation</h3>
+        <p>Sneaker, loafer, or boot silhouette — pick the shape you're building on top of.</p>
+      </div>
+      <div class="step">
+        <div class="num">02 / BLEND</div>
+        <h3>Mix your materials</h3>
+        <p>Leather, suede, canvas, mesh. Set the ratio, pick the colourway, add your initials.</p>
+      </div>
+      <div class="step">
+        <div class="num">03 / FORGE</div>
+        <h3>We build & ship</h3>
+        <p>Your spec goes straight to our workshop. Tracked delivery in 10–12 working days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="gallery">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Community builds</div>
+      <h2>Recently forged</h2>
+      <p>A few of the pairs our customers have designed this month.</p>
+    </div>
+    <div class="gallery">
+      <div class="gcard">
+        <div class="swatch-block" style="background:linear-gradient(135deg,#c1652b,#8892a3);"></div>
+        <div class="gbody">
+          <div class="gcode">AL-118</div>
+          <div class="gname">Copper Line</div>
+          <div class="gspec">Leather 60 / Suede 40</div>
+          <div class="gprice">₹4,499</div>
+        </div>
+      </div>
+      <div class="gcard">
+        <div class="swatch-block" style="background:linear-gradient(135deg,#232129,#8892a3);"></div>
+        <div class="gbody">
+          <div class="gcode">AL-092</div>
+          <div class="gname">Slate Runner</div>
+          <div class="gspec">Mesh 50 / Canvas 50</div>
+          <div class="gprice">₹3,899</div>
+        </div>
+      </div>
+      <div class="gcard">
+        <div class="swatch-block" style="background:linear-gradient(135deg,#eee9e0,#c1652b);"></div>
+        <div class="gbody">
+          <div class="gcode">AL-153</div>
+          <div class="gname">Ivory Forge</div>
+          <div class="gspec">Nappa 70 / Rubber trim 30</div>
+          <div class="gprice">₹4,999</div>
+        </div>
+      </div>
+      <div class="gcard">
+        <div class="swatch-block" style="background:linear-gradient(135deg,#8892a3,#131217);"></div>
+        <div class="gbody">
+          <div class="gcode">AL-076</div>
+          <div class="gname">Gunmetal Low</div>
+          <div class="gspec">Suede 65 / Leather 35</div>
+          <div class="gprice">₹4,299</div>
+        </div>
+      </div>
+      <div class="gcard">
+        <div class="swatch-block" style="background:linear-gradient(135deg,#c1652b,#eee9e0);"></div>
+        <div class="gbody">
+          <div class="gcode">AL-201</div>
+          <div class="gname">Rust Canvas</div>
+          <div class="gspec">Canvas 55 / Leather trim 45</div>
+          <div class="gprice">₹3,699</div>
+        </div>
+      </div>
+      <div class="gcard">
+        <div class="swatch-block" style="background:linear-gradient(135deg,#38353f,#c1652b);"></div>
+        <div class="gbody">
+          <div class="gcode">AL-140</div>
+          <div class="gname">Charcoal Alloy</div>
+          <div class="gspec">Leather 80 / Suede 20</div>
+          <div class="gprice">₹5,199</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Investment</div>
+      <h2>Pricing by build complexity</h2>
+      <p>Every tier is fully customisable — the difference is materials and finishing.</p>
+    </div>
+    <div class="pricing">
+      <div class="price-card">
+        <div class="tier">Standard</div>
+        <div class="amount">₹3,499 <span>onwards</span></div>
+        <ul>
+          <li>Canvas & synthetic blends</li>
+          <li>6 base colourways</li>
+          <li>10–12 day delivery</li>
+          <li>Free size exchange</li>
+        </ul>
+        <a href="#start" class="btn-ghost" style="text-align:center;">Choose Standard</a>
+      </div>
+      <div class="price-card featured">
+        <div class="tier">Signature</div>
+        <div class="amount">₹4,499 <span>onwards</span></div>
+        <ul>
+          <li>Genuine leather & suede blends</li>
+          <li>Unlimited colourway mixing</li>
+          <li>Monogram / initials</li>
+          <li>8–10 day delivery</li>
+          <li>Free size exchange</li>
+        </ul>
+        <a href="#start" class="btn-primary" style="text-align:center;">Choose Signature</a>
+      </div>
+      <div class="price-card">
+        <div class="tier">Atelier</div>
+        <div class="amount">₹6,999 <span>onwards</span></div>
+        <ul>
+          <li>Premium nappa leather</li>
+          <li>Hand-finished detailing</li>
+          <li>1:1 design consult call</li>
+          <li>5–7 day priority delivery</li>
+        </ul>
+        <a href="#start" class="btn-ghost" style="text-align:center;">Choose Atelier</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="reviews">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">From the community</div>
+      <h2>What early builders are saying</h2>
+    </div>
+    <div class="testimonials">
+      <div class="tcard">
+        <p>"I sketched a rough idea and the composition tool actually turned it into something wearable. Got compliments the first day out."</p>
+        <div class="who">— Ananya R., Delhi</div>
+      </div>
+      <div class="tcard">
+        <p>"Ordered a pair for my sister's wedding with her initials on the heel. Delivery was faster than most regular sneaker brands."</p>
+        <div class="who">— Kabir S., Bengaluru</div>
+      </div>
+      <div class="tcard">
+        <p>"The material blend slider is genuinely fun to use. I ended up with a canvas-suede mix I'd never have found off a shelf."</p>
+        <div class="who">— Meher K., Mumbai</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" id="start">
+  <div class="wrap">
+    <h2>Start your build</h2>
+    <p>Join the early access list — first 200 sign-ups get 15% off their first pair.</p>
+    <form class="email-form" onsubmit="handleSignup(event)">
+      <input type="email" id="email-input" placeholder="you@email.com" required>
+      <button type="submit" class="btn-primary">Get early access</button>
+    </form>
+    <div class="form-msg" id="form-msg"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <div class="copyright">© 2026 Alloys. Designed & built to order.</div>
+    <div class="foot-links">
+      <a href="#process">How it works</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function handleSignup(e){
+  e.preventDefault();
+  const email = document.getElementById('email-input').value;
+  const msg = document.getElementById('form-msg');
+  msg.textContent = "You're on the list — check " + email + " for a confirmation.";
+  document.getElementById('email-input').value = '';
+}
+</script>
+
+</body>
+</html>
